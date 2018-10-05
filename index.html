@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CSS Grid</title>
+  <style>
+  	body{
+  		width:600px;
+  	}
+    .wrapper{
+      display:grid;
+      /* grid-template-columns:1fr 1fr 1fr;*/
+      grid-template-columns:repeat(1, 1fr);
+      grid-gap:1em;
+      /* grid-auto-rows:100px; */
+      grid-auto-rows: minmax(100px, auto);
+    }
+
+	.parent-nested
+	{
+    margin-top: -111px;
+    margin-left: 70px;
+		display:grid;
+		grid-template-columns:repeat(2,1fr);
+	}
+		
+    .nested{
+      display:grid;
+      grid-template-columns:repeat(5, 0.2fr);
+    }
+
+    .wrapper > div{
+      padding:1em;
+    }
+    .wrapper > div:nth-child(odd){
+    }
+
+    .nested > div{
+      border:#333 1px solid;
+      padding:1em;
+    }
+
+    .nested > img{
+      max-width:60px;
+	cursor:pointer;
+    }
+    .btn-vote-aqui
+    {
+    	margin-left: 50px;
+    }
+    .video{
+    position: absolute;
+    left: 91px;
+    top: 73px;
+    width: 627px;
+    height: 353px;
+    }
+  </style>
+	
+	<script>
+	
+	var tag = document.createElement('script');
+	
+	tag.src = "https://www.youtube.com/iframe_api";
+	var firstScriptTag = document.getElementsByTagName('script')[0];
+	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	
+	// 3. This function creates an <iframe> (and YouTube player)
+	//    after the API code downloads.
+	var player;
+	function onYouTubeIframeAPIReady() {
+	player = new YT.Player('player', {
+	  videoId: 'LpCBemt4rFc',
+	  playerVars: {
+	    'showinfo': 0,
+		'rel':0
+	  },
+	  events: {
+	    'onReady': onPlayerReady
+	  }
+	});
+	}
+	
+	// 4. The API will call this function when the video player is ready.
+	function onPlayerReady(event) 
+	{
+		event.target.playVideo();
+	}
+	
+	function stopVideo() {
+		player.stopVideo();
+	}
+	function Play(item)
+	{
+		stopVideo();
+		
+		var element = document.getElementById("player");
+		element.parentNode.removeChild(element);
+		var mydiv = document.createElement("div");
+		mydiv.className = "video";
+		mydiv.id = "player";
+		document.getElementsByTagName('body')[0].appendChild(mydiv);
+		
+		
+		
+		
+		player = new YT.Player('player', {
+		height: '390',
+		width: '640',
+		videoId: item,
+		playerVars: {
+		'showinfo': 0,
+		'rel':0
+		},
+		events: {
+		'onReady': onPlayerReady
+		}
+		});
+	
+	}
+	function onPlayerReady(event) {
+		event.target.playVideo();
+	}
+	</script>
+  
+</head>
+<body>
+  <div class="wrapper">
+  	<div class="video" id="player"></div>
+      <img src="./assets/images/Fundo propaganda_800.jpg"/>
+      <div class="parent-nested">
+	      <div class="nested">
+	        <img src="./assets/images/Miniatura_Betinho_baixa.png" onclick="Play('ucJS1u9A6NE')"/>
+	        <img src="./assets/images/Miniatura_Diana_baixa.png"onclick="Play('jzl6LWknOcU')"/>
+	        <img src="./assets/images/Miniatura_Justinho_baixa.png"onclick="Play('F0i7Dr-ISnM')"/>
+	        <img src="./assets/images/Miniatura_Oswaldinho_baixa.png"onclick="Play('e0Q4Ce7MNl0')"/>
+	        <img src="./assets/images/Miniatura_Valter_baixa.png"onclick="Play('f3nCnauRgqY')"/>
+	      </div>
+        <a href="https://s3.amazonaws.com/danieldouradobucket/app/urnaHTML/GameDev_encerrado.html" target="_blank"><img src="./assets/images/Botao_votar.png" class="btn-vote-aqui"/></a>
+      </div>
+  </div>
+</body>
+</html>
