@@ -1,22 +1,20 @@
-<!doctype html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Propaganda eleitoral do Plenarinho</title>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="https://getbootstrap.com/favicon.ico">
+        <title>Propaganda eleitoral do Plenarinho</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <link rel="shortcut icon" href="./assets/interface/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="./assets/interface/favicon.ico" type="image/x-icon">
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    </head>
     <style>
-      .container{
-        text-align: center;
-      }
-      .cinzaClaro{
-        border: solid 1px;
-        height: 362px;
-        width: 500px;
-        background-color: snow;
-      }
-      .cinzaClaro > img{
-        height: 150px;
-        width: 105px;
-        border: solid 1px black;
+      .tela-esquerda{
       }
       .cinzaEscuro{
         width: 254px;
@@ -63,50 +61,182 @@
         width: 84px;
         background-color: green;
       }    
-      .grid{
+      .urna{
         display:grid;
         grid-template-columns:repeat(3,1fr);
       }
-      .parte-esquerda
+      .parte-direita
       {
+          text-align: center;
       }
-      #text{
-        background-image: url(https://3.bp.blogspot.com/-4oAWWCcNNz4/Tjr3nKNyVUI/AAAAAAAAPLU/Pouua-pNsEY/s1600/sq.gif);
-        width: 94px;
-        height: 18px;
-        background-size: 20px;
-        border: none;
-        font-size: 16px;
-        padding-left: 6px;
-        letter-spacing: 11px;
+      .tela
+      {
+        display:grid;
+        grid-template-columns: 70% 30%;
+        font-size:18pt;
+      }
+      .instructions  p {
+           margin: 0px 0;
+        }      
+        .instructions  hr {
+           margin: 0px 0;
+           border-top: 2px solid rgba(0,0,0,.9);
+        }
+      .tela-direita > img{
+        width: 100%;
+      }
+      .preload{
+          display:none;
+      }
+      .lcd
+      {
+        border: solid 1px;
+        height: 362px;
+        width: 500px;
+        background-color: snow;
+      }
+      .fim
+      {
+        font-size: 80pt;
+        text-align: center;
+        margin-top: 70px;
       }
     </style>
-    
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script>
-      function onNumberButtonClick(number)
-      {
-          $("#text").val($("#text").val()+number);
-      }
-      function onCorrigeButtonClick()
-      {
-          $("#text").val('');
-      }
+        $(document).ready(function () 
+        {
+          reset_candidato_details()
+        })
+        let number_typed = ''
+        function onNumberButtonClick(number)
+        {
+            number_typed = number_typed+number
+            let final_html = "<p>Número: "+number_typed+"</p>"
+            $(".numero").html(final_html);
+            decide_to_show_candidato(number_typed)
+        }
+        
+        function decide_to_show_candidato(number)
+        {
+          if(number == '9910') 
+          {
+              show_candidato("Super Betinho", 'Partido Criança Fala Sério', "juca_caju_3x4")
+          }
+          else if(number == '2494') 
+          {
+              show_candidato("Diana Rogers", 'Partido Conexão Estudantil', "juca_caju_3x4")
+          }
+          else if(number == '9999') 
+          {
+              show_candidato("Justinho", 'PRJ - Partido da Renovação Jovem', "juca_caju_3x4")
+          }
+          else if(number == '9929') 
+          {
+              show_candidato("Oswaldinho", 'Partido dos Direitos Infantis', "juca_caju_3x4")
+          }
+          else if(number == '6127') 
+          {
+              show_candidato("Valter Silva", 'Partido Millenium do Futuro', "juca_caju_3x4")
+          }
+          else if(number.length == 4)
+          {
+            reset_numero()
+          }
+          else
+          {
+              reset_candidato_details()
+          }
+        }
+        
+        function show_candidato(nome, partido, foto)
+        {
+          $("#candidato_nome").html("Nome: "+nome)
+          $("#candidato_partido").html("Partido: "+partido)
+          $("#tipo_voto").css({'visibility':'visible'})
+          $(".tela-direita").html("<img src='./assets/images/"+foto+".png'>")
+          $(".instructions").css({'visibility':'visible'})
+        }
+        function reset_numero()
+        {
+          number_typed = ''
+          $(".numero").html('<p>Número:</p>');
+          reset_candidato_details()
+          
+        }
+        function reset_candidato_details()
+        {
+          $("#tipo_voto").css({'visibility':'hidden'})
+          $("#candidato_partido").html("")
+          $("#candidato_nome").html("")
+          $(".tela-direita").html("") 
+          $(".instructions").css({'visibility':'hidden'})
+        }
+        function confirmar_voto()
+        {
+            if (number_typed.length == 4)
+            {
+                $('.lcd').html("<div class='fim'>FIM</div>")
+                var data = {
+                        "operation": "create",
+                        "TableName": "PlenarinhoEleicoes2018",
+                        "Item": {
+                        "id": new Date().getTime().toString(),
+                        "numero": number_typed
+                    }
+                };
+                execute(data);
+                reset_numero()
+
+            }
+        }
+    
+        function execute(data)
+        {
+        	$.ajax({
+        		url: 'https://c30yfrp846.execute-api.us-east-1.amazonaws.com/prod/ExampleFunctionWithHTTPEndpoint/',
+        		type: 'POST',
+        		crossDomain: true,
+        		data: JSON.stringify(data),
+        		dataType: 'json',
+        		success: function(data) {
+        		   alert(SUCCESS_STRING);
+        		},
+        		error: function(xhr, ajaxOptions, thrownError) {
+        			alert(ERROR_STRING);
+        
+        		}
+        	});
+        };
     </script>
   
 </head>
 <body>
-    <div class="container">
-      <div class="grid">
-        <div class="parte-esquerda">
-          <div class="cinzaClaro">
-            <img src="" alt="" />
-            <p>Número:</p>
-            <form action="">
-              <input type="text" maxlength="5" id="text"/>
-            </form>
-            <p>Nome:</p>
-          </div>
+        <div class="preload">
+            <img src="./assets/images/elizabety_3x4.png">
+        </div>
+      <div class="urna">
+          <div class="lcd">
+            <div class="tela">
+              <div class="tela-esquerda">
+                <div class="numero">
+                    <p id="numero">Número:</p>
+                </div>
+                <div>
+                    <p id="tipo_voto">Seu voto para Vereador</p>
+                    <p id="candidato_nome">Nome: Nome do Candidato</p>
+                    <p id="candidato_partido">Partido Partido Sorrir Faz Bem - PSFB</p>
+                </div>
+                <div class="instructions">
+                    <hr>
+                    <p>Aperte a tecla</p>
+                    <p>VERDE para CONFIRMAR</p>
+                    <p>LARANJA para CORRIGIR</p>
+                </div>
+              </div>
+              <div class="tela-direita">
+                  <img src="./assets/images/elizabety_3x4.png">
+              </div>
+            </div>
         </div>
         <div class="parte-direita">
           <div class="cinzaEscuro">
@@ -125,11 +255,10 @@
             <button class="bnt click" onclick="onNumberButtonClick(0)">0</button>
           <div class="teclado2">
             <button class="branco  click">BRANCO</button>
-            <button class="laranja  click" onclick="onCorrigeButtonClick()">CORRIGE</button>
-            <button class="verde">CONFIRMA</button>
+            <button class="laranja  click" onclick="reset_numero()">CORRIGE</button>
+            <button class="verde"  onclick="confirmar_voto()">CONFIRMA</button>
            </div>
           </div>
         </div>
       </div>
-    </div>  
 </body>
